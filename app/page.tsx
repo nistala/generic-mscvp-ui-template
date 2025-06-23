@@ -19,7 +19,7 @@ import { OperationsScreen } from "@/components/screens/operations-screen"
 import { SidebarProvider } from "@/components/ui/sidebar"
 
 export default function Dashboard() {
-  const [activeSection, setActiveSection] = useState("analytics")
+  const [activeSection, setActiveSection] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
 
   const renderContent = () => {
@@ -54,7 +54,7 @@ export default function Dashboard() {
       case "archive-purge":
         return <ArchivePurgeScreen />
       default:
-        return <AnalyticsScreen searchQuery={searchQuery} />
+        return <DashboardScreen searchQuery={searchQuery} />
     }
   }
 

@@ -294,10 +294,10 @@ export function DailyStatsScreen() {
             <h1 className="text-xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
               Daily Transaction Statistics
             </h1>
-            <p className="text-[#b7b2b3] mt-2 flex items-center gap-2">
+            <div className="text-[#b7b2b3] mt-2 flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              Comprehensive hourly breakdown and anomaly detection
-            </p>
+              <span>Comprehensive hourly breakdown and anomaly detection</span>
+            </div>
           </div>
           <div className="flex gap-3">
             <Select defaultValue="today">

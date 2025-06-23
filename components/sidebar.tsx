@@ -100,7 +100,7 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
         const isParentActive = activeParent === item.id || activeSection === item.id
 
         // Set default route to "dashboard" if activeSection is empty
-        if (!activeSection && item.id === "analytics") {
+        if (!activeSection && item.id === "") {
         onSectionChange("dashboard")
         }
         return (
