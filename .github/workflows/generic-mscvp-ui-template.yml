@@ -1,6 +1,9 @@
 name: Deploy generic mscvp ui template
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
