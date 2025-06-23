@@ -44,7 +44,7 @@ export function BreadcrumbNavigation({ activeSection, onSectionChange }: Breadcr
     <div className="bg-gradient-to-r from-white/80 to-slate-50/80 backdrop-blur-sm border-b border-white/20 px-8 py-4">
       <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem>
+          {/* <BreadcrumbItem>
             <BreadcrumbLink
               href="#"
               onClick={(e) => {
@@ -55,13 +55,34 @@ export function BreadcrumbNavigation({ activeSection, onSectionChange }: Breadcr
               <Home className="h-4 w-4 mr-1" />
               Home
             </BreadcrumbLink>
-          </BreadcrumbItem>
-
+          </BreadcrumbItem> 
           {currentSection.parent && (
             <>
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    onSectionChange(currentSection.parent)
+                  }}
+                  className="text-slate-600 hover:text-slate-900 font-medium transition-colors duration-300"
+                >
+                  {currentSection.parentLabel}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
               <BreadcrumbSeparator>
                 <ChevronRight className="h-4 w-4 text-slate-400" />
               </BreadcrumbSeparator>
+            </>
+          )}*/}
+          {currentSection.parent && (
+            <>
+                <BreadcrumbSeparator>
+                <span className="flex items-center space-x-1">
+                  <Home className="h-4 w-4 text-slate-400" />
+                  <ChevronRight className="h-4 w-4 text-slate-400" />
+                </span>
+                </BreadcrumbSeparator>
               <BreadcrumbItem>
                 <BreadcrumbLink
                   href="#"

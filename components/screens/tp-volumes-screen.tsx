@@ -22,9 +22,11 @@ import {
   AlertTriangle,
   Clock,
   X,
+  Calendar
 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 const partnerVolumes = [
   {
     id: 1,
@@ -177,7 +179,7 @@ export function TPVolumesScreen() {
   const avgSuccessRate = partnerVolumes.reduce((sum, partner) => sum + partner.successRate, 0) / partnerVolumes.length
   const activePartners = partnerVolumes.filter((p) => p.connectionStatus === "active").length
   const totalAlerts = partnerVolumes.reduce((sum, partner) => sum + partner.alerts, 0)
-
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false)
   const getStatusColor = (status: string) => {
     switch (status) {
       case "excellent":
@@ -219,8 +221,8 @@ export function TPVolumesScreen() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
-              Trading Partner Volumes
+            <h1 className="text-xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
+             Trading Partner Volumes
             </h1>
             <p className="text-[#b7b2b3] mt-2 flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -228,106 +230,194 @@ export function TPVolumesScreen() {
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="border-[#b7b2b3] text-[#0d416b] hover:bg-white/80 backdrop-blur-sm">
+            <Select defaultValue="today">
+              <SelectTrigger className="w-40 bg-white/70 backdrop-blur-sm border-white/20 hover:bg-white/80">
+                <Calendar className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="today">Today</SelectItem>
+                <SelectItem value="yesterday">Yesterday</SelectItem>
+                <SelectItem value="last7days">Last 7 Days</SelectItem>
+              </SelectContent>
+            </Select>
+            {/* Advanced Filters Button and Dialog */}
+            <Button
+              variant="outline"
+              className="border-[#b7b2b3] text-[#0d416b] hover:bg-white/80 backdrop-blur-sm"
+              onClick={() => setIsFilterDialogOpen(true)}
+            >
               <Filter className="h-4 w-4 mr-2" />
               Advanced Filters
             </Button>
+            <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
+              <DialogContent className="max-w-md bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent flex items-center gap-2">
+                    <Filter className="h-5 w-5" />
+                    Advanced Filters
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 mt-4">
+                  <div>
+                    <label className="block text-[#0d416b] font-medium mb-1">Status</label>
+                    <Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="All Statuses" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="normal">Normal</SelectItem>
+                        <SelectItem value="spike">Spike</SelectItem>
+                        <SelectItem value="critical">Critical</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-[#0d416b] font-medium mb-1">Trend</label>
+                    <Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="All Trends" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="up">Up</SelectItem>
+                        <SelectItem value="down">Down</SelectItem>
+                        <SelectItem value="stable">Stable</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-[#0d416b] font-medium mb-1">Severity</label>
+                    <Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="All Severities" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All</SelectItem>
+                        <SelectItem value="critical">Critical</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="low">Low</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-6">
+                  <Button variant="outline" onClick={() => setIsFilterDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] text-white"
+                    onClick={() => setIsFilterDialogOpen(false)}
+                  >
+                    Apply Filters
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
             <Button className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white shadow-lg">
               <Download className="h-4 w-4 mr-2" />
-              Export All Data
+              Export Data
             </Button>
           </div>
+
+
         </div>
 
         {/* Summary Cards */}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#00aae7] hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#00aae7] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Total Daily Volume</CardTitle>
-                <Activity className="h-5 w-5 text-[#00aae7]" />
+                <CardTitle className="text-xs font-medium text-[#2368a0]">Total Daily Volume</CardTitle>
+                <Activity className="h-4 w-4 text-[#00aae7]" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent">
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
                 {totalDaily.toLocaleString()}
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">Across all partners</p>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">Across all partners</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-green-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#8c8c8c] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Active Partners</CardTitle>
-                <Users className="h-5 w-5 text-green-500" />
+                <CardTitle className="text-xs font-medium text-[#8c8c8c]">Active Partners</CardTitle>
+                <Users className="h-4 w-4 text-[#8c8c8c]" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
                 {activePartners}
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">Connected partners</p>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">Connected partners</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-purple-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          {/* Failures card keeps original color */}
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-red-500 hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Monthly Volume</CardTitle>
-                <Target className="h-5 w-5 text-purple-500" />
+                <CardTitle className="text-xs font-medium text-[#0d416b]">Active Alerts</CardTitle>
+                <AlertTriangle className="h-4 w-4 text-red-500" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                {(totalMonthly / 1000000).toFixed(1)}M
-              </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">Last 30 days</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-yellow-500 hover:scale-105">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Avg Success Rate</CardTitle>
-                <Award className="h-5 w-5 text-yellow-500" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                {avgSuccessRate.toFixed(1)}%
-              </div>
-              <Badge className="bg-green-100 text-green-800 hover:bg-green-100 mt-1">Excellent</Badge>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-red-500 hover:scale-105">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Active Alerts</CardTitle>
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent leading-tight">
                 {totalAlerts}
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">Require attention</p>
+              <p className="text-[10px] text-[#b7b2b3] mt-0.5">
+                Require attention
+              </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-cyan-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#00aae7] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Weekly Trend</CardTitle>
-                <TrendingUp className="h-5 w-5 text-cyan-500" />
+                <CardTitle className="text-xs font-medium text-[#2368a0]">Monthly Volume</CardTitle>
+                <Target className="h-4 w-4 text-[#00aae7]" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
+                {(totalMonthly / 1000000).toFixed(1)}M
+              </div>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">Last 30 days</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#8c8c8c] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-medium text-[#8c8c8c]">Avg Success Rate</CardTitle>
+                <Award className="h-4 w-4 text-[#8c8c8c]" />
+              </div>
+            </CardHeader>
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
+                {avgSuccessRate.toFixed(1)}%
+              </div>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">Excellent</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#00aae7] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xs font-medium text-[#2368a0]">Weekly Trend</CardTitle>
+                <TrendingUp className="h-4 w-4 text-[#00aae7]" />
+              </div>
+            </CardHeader>
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
                 +4.2%
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">vs last week</p>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">vs last week</p>
             </CardContent>
           </Card>
         </div>
@@ -481,9 +571,8 @@ export function TPVolumesScreen() {
                               <div className="font-semibold text-[#0d416b]">{partner.partner}</div>
                               <div className="text-xs text-[#b7b2b3] flex items-center gap-1">
                                 <div
-                                  className={`w-2 h-2 rounded-full ${
-                                    partner.connectionStatus === "active" ? "bg-green-500" : "bg-yellow-500"
-                                  }`}
+                                  className={`w-2 h-2 rounded-full ${partner.connectionStatus === "active" ? "bg-green-500" : "bg-yellow-500"
+                                    }`}
                                 ></div>
                                 {partner.connectionStatus}
                               </div>
@@ -589,9 +678,8 @@ export function TPVolumesScreen() {
                         </p>
                       </div>
                       <div
-                        className={`w-3 h-3 rounded-full ${
-                          selectedPartner.connectionStatus === "active" ? "bg-green-500" : "bg-yellow-500"
-                        }`}
+                        className={`w-3 h-3 rounded-full ${selectedPartner.connectionStatus === "active" ? "bg-green-500" : "bg-yellow-500"
+                          }`}
                       ></div>
                     </div>
                   </CardContent>

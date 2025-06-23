@@ -23,9 +23,11 @@ import {
   FileText,
   Eye,
   X,
+  Calendar,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 interface DashboardScreenProps {
   searchQuery: string
@@ -85,6 +87,7 @@ const topPartners = [
 export function DashboardScreen({ searchQuery }: DashboardScreenProps) {
   const [selectedTransaction, setSelectedTransaction] = useState<(typeof recentTransactions)[0] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false)
 
   const successRate = ((transactionSummary.success / transactionSummary.total) * 100).toFixed(1)
   const failureRate = ((transactionSummary.failure / transactionSummary.total) * 100).toFixed(1)
@@ -96,204 +99,247 @@ export function DashboardScreen({ searchQuery }: DashboardScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
-      <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-150 via-blue-150 to-indigo-200 p-3">
+      <div className="space-y-3 ">
+        {/* <div>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
+            Transaction Dashboard
+          </h1>
+          <p className="text-[#b7b2b3] flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse inline-block"></span>
+            Real-time EDI transaction monitoring and analytics
+          </p>
+        </div> */}
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
-              Transaction Dashboard
-            </h1>
-            <p className="text-[#b7b2b3] mt-2 flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse inline-block"></span>
-              Real-time EDI transaction monitoring and analytics
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="outline" className="border-[#b7b2b3] text-[#0d416b] hover:bg-white/80 backdrop-blur-sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Advanced Filters
-            </Button>
-            <Button className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white shadow-lg">
-              <Download className="h-4 w-4 mr-2" />
-              Export Dashboard
-            </Button>
-          </div>
-        </div>
 
-        {/* Quick Filters */}
-        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <CardHeader className="pb-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent flex items-center">
-                  <Filter className="h-5 w-5 mr-2 text-blue-500" />
-                  Smart Filters
-                </CardTitle>
-                <CardDescription className="text-[#b7b2b3]">
-                  Apply intelligent filters to analyze transaction data in real-time
-                </CardDescription>
-              </div>
-              <Button className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white">
-                <Sparkles className="h-4 w-4 mr-2" />
-                Apply Filters
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[#0d416b]">Partner</label>
-                <Select>
-                  <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
-                    <SelectValue placeholder="All Partners" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
-                    <SelectItem value="all">All Partners</SelectItem>
-                    <SelectItem value="walmart">Walmart Inc.</SelectItem>
-                    <SelectItem value="target">Target Corp.</SelectItem>
-                    <SelectItem value="amazon">Amazon LLC</SelectItem>
-                    <SelectItem value="homedepot">Home Depot</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[#0d416b]">Date Range</label>
-                <Select>
-                  <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
-                    <SelectValue placeholder="Last 7 days" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
-                    <SelectItem value="today">Today</SelectItem>
-                    <SelectItem value="week">Last 7 days</SelectItem>
-                    <SelectItem value="month">Last 30 days</SelectItem>
-                    <SelectItem value="quarter">Last 90 days</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[#0d416b]">Transaction Type</label>
-                <Select>
-                  <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
-                    <SelectValue placeholder="All Types" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="850">850 - Purchase Order</SelectItem>
-                    <SelectItem value="810">810 - Invoice</SelectItem>
-                    <SelectItem value="856">856 - ASN</SelectItem>
-                    <SelectItem value="855">855 - PO Acknowledgment</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-[#0d416b]">Status</label>
-                <Select>
-                  <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
-                    <SelectValue placeholder="All Status" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="success">Success</SelectItem>
-                    <SelectItem value="failure">Failure</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-end">
-                <Button className="w-full bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white shadow-lg">
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Apply
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Transaction Summary Cards */}
+           <div className="flex items-center justify-between">
+                  <div>
+                    <h1 className="text-xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
+                      Transaction Dashboard
+                    </h1>
+                    <p className="text-[#b7b2b3] mt-2 flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                       Real-time EDI transaction monitoring and analytics
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Select defaultValue="today">
+                      <SelectTrigger className="w-40 bg-white/70 backdrop-blur-sm border-white/20 hover:bg-white/80">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="today">Today</SelectItem>
+                        <SelectItem value="yesterday">Yesterday</SelectItem>
+                        <SelectItem value="last7days">Last 7 Days</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="outline"
+                      className="border-[#b7b2b3] text-[#0d416b] hover:bg-white/80 backdrop-blur-sm"
+                      onClick={() => setIsAccordionOpen(true)}
+                    >
+                      <Filter className="h-4 w-4 mr-2" />
+                      Advanced Filters
+                    </Button>
+                    <Dialog open={isAccordionOpen} onOpenChange={setIsAccordionOpen}>
+                      <DialogContent className="max-w-xl bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent flex items-center gap-3">
+                        Advanced Filters
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Partner</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="All Partners" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="all">All Partners</SelectItem>
+                          <SelectItem value="walmart">Walmart Inc.</SelectItem>
+                          <SelectItem value="target">Target Corp.</SelectItem>
+                          <SelectItem value="amazon">Amazon LLC</SelectItem>
+                          <SelectItem value="homedepot">Home Depot</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Date Range</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="Last 7 days" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="today">Today</SelectItem>
+                          <SelectItem value="week">Last 7 days</SelectItem>
+                          <SelectItem value="month">Last 30 days</SelectItem>
+                          <SelectItem value="quarter">Last 90 days</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Transaction Type</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="All Types" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="all">All Types</SelectItem>
+                          <SelectItem value="850">850 - Purchase Order</SelectItem>
+                          <SelectItem value="810">810 - Invoice</SelectItem>
+                          <SelectItem value="856">856 - ASN</SelectItem>
+                          <SelectItem value="855">855 - PO Acknowledgment</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Status</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="All Status" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="all">All Status</SelectItem>
+                          <SelectItem value="success">Success</SelectItem>
+                          <SelectItem value="failure">Failure</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Amount Range</label>
+                        <div className="flex gap-2">
+                          <input
+                          type="number"
+                          placeholder="Min"
+                          className="w-1/2 px-2 py-1 border rounded bg-white/80"
+                          />
+                          <input
+                          type="number"
+                          placeholder="Max"
+                          className="w-1/2 px-2 py-1 border rounded bg-white/80"
+                          />
+                        </div>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Sort By</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="Newest First" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="newest">Newest First</SelectItem>
+                          <SelectItem value="oldest">Oldest First</SelectItem>
+                          <SelectItem value="amountHigh">Amount: High to Low</SelectItem>
+                          <SelectItem value="amountLow">Amount: Low to High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                        <Button
+                        variant="outline"
+                        className="border-[#b7b2b3] text-[#0d416b]"
+                        onClick={() => setIsAccordionOpen(false)}
+                        >
+                        Cancel
+                        </Button>
+                        <Button className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white">
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Apply
+                        </Button>
+                      </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Button className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white shadow-lg">
+                      <Download className="h-4 w-4 mr-2" />
+                      Export Data
+                    </Button>
+                  </div>
+                </div>
+        
+       
+  {/* Transaction Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-green-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 h-24 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-green-500 hover:scale-105">
+            <CardHeader className="pb-1 pt-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Success Transactions</CardTitle>
-                <CheckCircle className="h-5 w-5 text-green-500" />
+                <CardTitle className="text-xs font-medium text-[#0d416b]">Success Transactions</CardTitle>
+                <CheckCircle className="h-4 w-4 text-green-500" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            <CardContent className="flex flex-col justify-between h-[52px] p-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent leading-tight">
                 {transactionSummary.success.toLocaleString()}
               </div>
-              <div className="flex items-center justify-between mt-2">
-                <Badge className="bg-green-100 text-green-700 hover:bg-green-100 shadow-sm font-semibold">
+              <div className="flex items-center justify-between mt-1">
+                <Badge className="bg-green-100 text-green-700 hover:bg-green-100 shadow-sm font-semibold px-1 py-0.5 text-xs">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   {successRate}%
                 </Badge>
-                <span className="text-xs text-[#b7b2b3] font-medium">success rate</span>
+                <span className="text-[10px] text-[#b7b2b3] font-medium">success rate</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-red-500 hover:scale-105">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Failed Transactions</CardTitle>
-                <XCircle className="h-5 w-5 text-red-500" />
+            <Card className="bg-white/70 h-24 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-red-500 hover:scale-105">
+            <CardContent className="flex flex-col justify-between h-full p-2">
+              <div className="flex items-center justify-between pb-1">
+              <CardTitle className="text-xs font-medium text-[#0d416b]">Failed Transactions</CardTitle>
+              <XCircle className="h-4 w-4 text-red-500" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-                {transactionSummary.failure.toLocaleString()}
+              <div className="text-2xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent leading-tight">
+              {transactionSummary.failure.toLocaleString()}
               </div>
-              <div className="flex items-center justify-between mt-2">
-                <Badge className="bg-red-100 text-red-700 hover:bg-red-100 shadow-sm font-semibold">
-                  {failureRate}%
-                </Badge>
-                <span className="text-xs text-[#b7b2b3] font-medium">failure rate</span>
+              <div className="flex items-center justify-between mt-1">
+              <Badge className="bg-red-100 text-red-700 hover:bg-red-100 shadow-sm font-semibold px-1 py-0.5 text-xs">
+                {failureRate}%
+              </Badge>
+              <span className="text-[10px] text-[#b7b2b3] font-medium">failure rate</span>
               </div>
             </CardContent>
-          </Card>
+            </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-yellow-500 hover:scale-105">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Pending Transactions</CardTitle>
-                <Clock className="h-5 w-5 text-yellow-500" />
+            <Card className="bg-white/70 h-24 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-yellow-500 hover:scale-105">
+            <CardContent className="flex flex-col justify-between h-full p-2">
+              <div className="flex items-center justify-between pb-1">
+              <CardTitle className="text-xs font-medium text-[#0d416b]">Pending Transactions</CardTitle>
+              <Clock className="h-4 w-4 text-yellow-500" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                {transactionSummary.pending.toLocaleString()}
+              <div className="text-2xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent leading-tight">
+              {transactionSummary.pending.toLocaleString()}
               </div>
-              <div className="flex items-center justify-between mt-2">
-                <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 shadow-sm font-semibold">
-                  {pendingRate}%
-                </Badge>
-                <span className="text-xs text-[#b7b2b3] font-medium">pending</span>
+              <div className="flex items-center justify-between mt-1">
+              <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 shadow-sm font-semibold px-1 py-0.5 text-xs">
+                {pendingRate}%
+              </Badge>
+              <span className="text-[10px] text-[#b7b2b3] font-medium">pending</span>
               </div>
             </CardContent>
-          </Card>
+            </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-blue-500 hover:scale-105">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Total Volume</CardTitle>
-                <BarChart3 className="h-5 w-5 text-blue-500" />
+            <Card className="bg-white/70 h-24 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-blue-500 hover:scale-105">
+            <CardContent className="flex flex-col justify-between h-full p-2">
+              <div className="flex items-center justify-between pb-1">
+              <CardTitle className="text-xs font-medium text-[#0d416b]">Total Volume</CardTitle>
+              <BarChart3 className="h-4 w-4 text-blue-500" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                {transactionSummary.total.toLocaleString()}
+              <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent leading-tight">
+              {transactionSummary.total.toLocaleString()}
               </div>
-              <div className="flex items-center justify-between mt-2">
-                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 shadow-sm font-semibold">
-                  <Zap className="h-3 w-3 mr-1" />
-                  Today
-                </Badge>
-                <span className="text-xs text-[#b7b2b3] font-medium">transactions</span>
+              <div className="flex items-center justify-between mt-1">
+              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 shadow-sm font-semibold px-1 py-0.5 text-xs">
+                <Zap className="h-3 w-3 mr-1" />
+                Today
+              </Badge>
+              <span className="text-[10px] text-[#b7b2b3] font-medium">transactions</span>
               </div>
             </CardContent>
-          </Card>
+            </Card>
         </div>
+        
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -333,48 +379,50 @@ export function DashboardScreen({ searchQuery }: DashboardScreenProps) {
                 }}
                 className="h-[350px]"
               >
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={dailyTrendData}>
-                    <defs>
-                      <linearGradient id="successGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
-                      </linearGradient>
-                      <linearGradient id="failureGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.6} />
-                    <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
-                    <YAxis stroke="#64748b" fontSize={12} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Area
-                      type="monotone"
-                      dataKey="success"
-                      stackId="1"
-                      stroke="#10b981"
-                      fill="url(#successGradient)"
-                      strokeWidth={2}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="failure"
-                      stackId="1"
-                      stroke="#ef4444"
-                      fill="url(#failureGradient)"
-                      strokeWidth={2}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="transactions"
-                      stroke="#4f46e5"
-                      strokeWidth={3}
-                      dot={{ fill: "#4f46e5", strokeWidth: 2, r: 5 }}
-                      activeDot={{ r: 7, stroke: "#4f46e5", strokeWidth: 2, fill: "#fff" }}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <div className="h-[350px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={dailyTrendData}>
+                      <defs>
+                        <linearGradient id="successGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
+                        </linearGradient>
+                        <linearGradient id="failureGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" opacity={0.6} />
+                      <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
+                      <YAxis stroke="#64748b" fontSize={12} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Area
+                        type="monotone"
+                        dataKey="success"
+                        stackId="1"
+                        stroke="#10b981"
+                        fill="url(#successGradient)"
+                        strokeWidth={2}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="failure"
+                        stackId="1"
+                        stroke="#ef4444"
+                        fill="url(#failureGradient)"
+                        strokeWidth={2}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="transactions"
+                        stroke="#4f46e5"
+                        strokeWidth={3}
+                        dot={{ fill: "#4f46e5", strokeWidth: 2, r: 5 }}
+                        activeDot={{ r: 7, stroke: "#4f46e5", strokeWidth: 2, fill: "#fff" }}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </ChartContainer>
             </CardContent>
           </Card>

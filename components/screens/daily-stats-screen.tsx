@@ -176,6 +176,7 @@ const alerts = [
 export function DailyStatsScreen() {
   const [selectedAlert, setSelectedAlert] = useState<(typeof alerts)[0] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false)
 
   const totalVolume = hourlyStats.reduce((sum, stat) => sum + stat.volume, 0)
   const totalSuccess = hourlyStats.reduce((sum, stat) => sum + stat.success, 0)
@@ -290,7 +291,7 @@ export function DailyStatsScreen() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
               Daily Transaction Statistics
             </h1>
             <p className="text-[#b7b2b3] mt-2 flex items-center gap-2">
@@ -310,10 +311,81 @@ export function DailyStatsScreen() {
                 <SelectItem value="last7days">Last 7 Days</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" className="border-[#b7b2b3] text-[#0d416b] hover:bg-white/80 backdrop-blur-sm">
+            {/* Advanced Filters Button and Dialog */}
+            <Button
+              variant="outline"
+              className="border-[#b7b2b3] text-[#0d416b] hover:bg-white/80 backdrop-blur-sm"
+              onClick={() => setIsFilterDialogOpen(true)}
+            >
               <Filter className="h-4 w-4 mr-2" />
               Advanced Filters
             </Button>
+            <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
+              <DialogContent className="max-w-md bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent flex items-center gap-2">
+                <Filter className="h-5 w-5" />
+                Advanced Filters
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 mt-4">
+                <div>
+                <label className="block text-[#0d416b] font-medium mb-1">Status</label>
+                <Select>
+                  <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
+                  <SelectItem value="spike">Spike</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+                </div>
+                <div>
+                <label className="block text-[#0d416b] font-medium mb-1">Trend</label>
+                <Select>
+                  <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Trends" />
+                  </SelectTrigger>
+                  <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="up">Up</SelectItem>
+                  <SelectItem value="down">Down</SelectItem>
+                  <SelectItem value="stable">Stable</SelectItem>
+                  </SelectContent>
+                </Select>
+                </div>
+                <div>
+                <label className="block text-[#0d416b] font-medium mb-1">Severity</label>
+                <Select>
+                  <SelectTrigger className="w-full">
+                  <SelectValue placeholder="All Severities" />
+                  </SelectTrigger>
+                  <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="low">Low</SelectItem>
+                  </SelectContent>
+                </Select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-6">
+                <Button variant="outline" onClick={() => setIsFilterDialogOpen(false)}>
+                Cancel
+                </Button>
+                <Button
+                className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] text-white"
+                onClick={() => setIsFilterDialogOpen(false)}
+                >
+                Apply Filters
+                </Button>
+              </div>
+              </DialogContent>
+            </Dialog>
             <Button className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white shadow-lg">
               <Download className="h-4 w-4 mr-2" />
               Export Data
@@ -323,105 +395,106 @@ export function DailyStatsScreen() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#00aae7] hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#00aae7] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Total Volume</CardTitle>
-                <Activity className="h-5 w-5 text-[#00aae7]" />
+          <CardTitle className="text-xs font-medium text-[#2368a0]">Total Volume</CardTitle>
+          <Activity className="h-4 w-4 text-[#00aae7]" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent">
-                {totalVolume.toLocaleString()}
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
+          {totalVolume.toLocaleString()}
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">Today's transactions</p>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">Today's transactions</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-green-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#8c8c8c] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Success Rate</CardTitle>
-                <TrendingUp className="h-5 w-5 text-green-500" />
+          <CardTitle className="text-xs font-medium text-[#8c8c8c]">Success Rate</CardTitle>
+          <TrendingUp className="h-4 w-4 text-[#8c8c8c]" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                {((totalSuccess / totalVolume) * 100).toFixed(1)}%
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
+          {((totalSuccess / totalVolume) * 100).toFixed(1)}%
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">{totalSuccess.toLocaleString()} successful</p>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">{totalSuccess.toLocaleString()} successful</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-red-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          {/* Failures card keeps original color */}
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-red-500 hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Failures</CardTitle>
-                <AlertTriangle className="h-5 w-5 text-red-500" />
+          <CardTitle className="text-xs font-medium text-[#0d416b]">Failures</CardTitle>
+          <AlertTriangle className="h-4 w-4 text-red-500" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-                {totalFailure.toLocaleString()}
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent leading-tight">
+          {totalFailure.toLocaleString()}
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">
-                {((totalFailure / totalVolume) * 100).toFixed(1)}% failure rate
+              <p className="text-[10px] text-[#b7b2b3] mt-0.5">
+          {((totalFailure / totalVolume) * 100).toFixed(1)}% failure rate
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-purple-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#00aae7] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Avg Response</CardTitle>
-                <Clock className="h-5 w-5 text-purple-500" />
+          <CardTitle className="text-xs font-medium text-[#2368a0]">Avg Response</CardTitle>
+          <Clock className="h-4 w-4 text-[#00aae7]" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                {avgResponseTime}s
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
+          {avgResponseTime}s
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">Average response time</p>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">Average response time</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-yellow-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#8c8c8c] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Peak Hour</CardTitle>
-                <Zap className="h-5 w-5 text-yellow-500" />
+          <CardTitle className="text-xs font-medium text-[#8c8c8c]">Peak Hour</CardTitle>
+          <Zap className="h-4 w-4 text-[#8c8c8c]" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                {peakHour.hour}
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
+          {peakHour.hour}
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">{peakHour.volume.toLocaleString()} transactions</p>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">{peakHour.volume.toLocaleString()} transactions</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-orange-500 hover:scale-105">
-            <CardHeader className="pb-2">
+          <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 border-l-4 border-l-[#00aae7] hover:scale-105 h-24 min-h-0">
+            <CardHeader className="pb-1 pt-2 px-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-[#0d416b]">Critical Hours</CardTitle>
-                <AlertCircle className="h-5 w-5 text-orange-500" />
+          <CardTitle className="text-xs font-medium text-[#2368a0]">Critical Hours</CardTitle>
+          <AlertCircle className="h-4 w-4 text-[#00aae7]" />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                {criticalHours}
+            <CardContent className="px-4 pt-0 pb-2">
+              <div className="text-2xl font-bold bg-gradient-to-r from-[#00aae7] to-[#2368a0] bg-clip-text text-transparent leading-tight">
+          {criticalHours}
               </div>
-              <p className="text-xs text-[#b7b2b3] mt-1">Hours above threshold</p>
+              <p className="text-[10px] text-[#8c8c8c] mt-0.5">Hours above threshold</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Enhanced Alerts Section */}
-        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 ">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent flex items-center">
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent flex items-center">
                   <AlertTriangle className="h-6 w-6 mr-3 text-red-500" />
                   Volume & Performance Alerts
                   <Badge className="ml-3 bg-red-100 text-red-800">{alerts.length} Active</Badge>
@@ -442,124 +515,61 @@ export function DailyStatsScreen() {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              {alerts.map((alert) => {
-                const IconComponent = alert.icon
-                return (
-                  <Alert
-                    key={alert.id}
-                    className={`${getSeverityColor(alert.severity)} border-l-4 hover:shadow-lg transition-all duration-300`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3">
-                        <IconComponent className="h-5 w-5 mt-0.5" />
-                        <div className="flex-1">
-                          <AlertTitle className="text-[#0d416b] font-semibold flex items-center gap-2">
-                            {alert.title}
-                            {getSeverityBadge(alert.severity)}
-                          </AlertTitle>
-                          <AlertDescription className="text-[#b7b2b3] mt-1">
-                            {alert.message}
-                            <div className="flex items-center space-x-4 mt-2 text-xs">
-                              <span className="flex items-center">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {alert.time}
-                              </span>
-                              <span className="flex items-center">
-                                <Activity className="h-3 w-3 mr-1" />
-                                Impact: {alert.impact}
-                              </span>
-                              <span className="flex items-center">
-                                <Eye className="h-3 w-3 mr-1" />
-                                {alert.affected}
-                              </span>
-                            </div>
-                          </AlertDescription>
+            <CardContent className="px-4 pt-0 pb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {alerts.map((alert) => {
+                  const IconComponent = alert.icon
+                  return (
+                    <Alert
+                      key={alert.id}
+                      className={`${getSeverityColor(alert.severity)} border-l-4 hover:shadow-lg transition-all duration-300`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-3">
+                          <IconComponent className="h-5 w-5 mt-0.5" />
+                          <div className="flex-1">
+                            <AlertTitle className="text-[#0d416b] font-semibold flex items-center gap-2">
+                              {alert.title}
+                              {getSeverityBadge(alert.severity)}
+                            </AlertTitle>
+                            <AlertDescription className="text-[#b7b2b3] mt-1">
+                              {alert.message}
+                              <div className="flex items-center space-x-4 mt-2 text-xs">
+                                <span className="flex items-center">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  {alert.time}
+                                </span>
+                                <span className="flex items-center">
+                                  <Activity className="h-3 w-3 mr-1" />
+                                  Impact: {alert.impact}
+                                </span>
+                                <span className="flex items-center">
+                                  <Eye className="h-3 w-3 mr-1" />
+                                  {alert.affected}
+                                </span>
+                              </div>
+                            </AlertDescription>
+                          </div>
                         </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="ml-4 border-[#00aae7] text-[#00aae7] hover:bg-[#00aae7] hover:text-white transition-all duration-200"
+                          onClick={() => handleViewDetails(alert)}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Details
+                        </Button>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="ml-4 border-[#00aae7] text-[#00aae7] hover:bg-[#00aae7] hover:text-white transition-all duration-200"
-                        onClick={() => handleViewDetails(alert)}
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        View Details
-                      </Button>
-                    </div>
-                  </Alert>
-                )
-              })}
-            </div>
-          </CardContent>
+                    </Alert>
+                  )
+                })}
+              </div>
+            </CardContent>
         </Card>
 
         {/* Enhanced Hourly Heatmap */}
-        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent">
-                  Transaction Volume Heatmap
-                </CardTitle>
-                <CardDescription className="text-[#b7b2b3]">
-                  Visual representation of hourly transaction intensity and patterns
-                </CardDescription>
-              </div>
-              <Button variant="outline" className="border-[#b7b2b3] text-[#0d416b] hover:bg-white/80">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Analyze Pattern
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-12 gap-2 mb-6">
-              {hourlyStats.map((stat) => {
-                const intensity = (stat.volume / Math.max(...hourlyStats.map((s) => s.volume))) * 100
-                return (
-                  <div
-                    key={stat.hour}
-                    className={`
-                      relative h-16 rounded-lg flex flex-col items-center justify-center text-white text-xs font-medium
-                      hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg
-                      ${getVolumeIntensity(stat.volume)}
-                    `}
-                    title={`${stat.hour}: ${stat.volume.toLocaleString()} transactions`}
-                  >
-                    <div className="text-[10px] opacity-90">{stat.hour.split(":")[0]}</div>
-                    <div className="text-xs font-bold">{(stat.volume / 1000).toFixed(1)}k</div>
-                    <div className="absolute -top-1 -right-1">{getTrendIcon(stat.trend)}</div>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Heatmap Legend */}
-            <div className="flex items-center justify-center space-x-6 text-sm text-[#b7b2b3]">
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-green-500 rounded"></div>
-                <span>Low (0-20%)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                <span>Moderate (20-40%)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-                <span>High (40-60%)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-orange-500 rounded"></div>
-                <span>Very High (60-80%)</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-red-500 rounded"></div>
-                <span>Critical (80-100%)</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      
 
         {/* Enhanced Detailed Table */}
         <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -586,7 +596,11 @@ export function DailyStatsScreen() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
+            <div
+              className={`overflow-x-auto ${
+              hourlyStats.length > 10 ? "max-h-[520px] overflow-y-auto" : ""
+              }`}
+            >
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gradient-to-r from-slate-50 to-blue-50 hover:from-slate-100 hover:to-blue-100">

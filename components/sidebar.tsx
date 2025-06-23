@@ -105,72 +105,76 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
           const isExpanded = expandedItems.includes(item.id)
           const isParentActive = activeParent === item.id || activeSection === item.id
 
-          return (
+            // Set default route to "dashboard" if activeSection is empty
+            if (!activeSection && item.id === "analytics") {
+            onSectionChange("dashboard")
+            }
+            return (
             <Collapsible key={item.id} open={isExpanded} onOpenChange={() => toggleExpanded(item.id)}>
               <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start text-left px-4 py-3 h-auto hover:bg-white/60 hover:shadow-md rounded-xl transition-all duration-300 group",
-                    isParentActive && "bg-white/80 shadow-lg backdrop-blur-sm",
-                  )}
-                  onClick={() => onSectionChange(item.id)}
+              <Button
+                variant="ghost"
+                className={cn(
+                "w-full justify-start text-left px-4 py-3 h-auto hover:bg-white/60 hover:shadow-md rounded-xl transition-all duration-300 group",
+                isParentActive && "bg-white/80 shadow-lg backdrop-blur-sm",
+                )}
+                // Remove onClick to prevent section change on parent click
+              >
+                <div
+                className={cn(
+                "w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-300",
+                isParentActive ? "premium-gradient-blue shadow-lg" : "bg-slate-100 group-hover:bg-white",
+                )}
                 >
-                  <div
-                    className={cn(
-                      "w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-300",
-                      isParentActive ? "premium-gradient-blue shadow-lg" : "bg-slate-100 group-hover:bg-white",
-                    )}
-                  >
-                    <Icon
-                      className={cn(
-                        "h-4 w-4 transition-colors duration-300",
-                        isParentActive ? "text-white" : "text-slate-600 group-hover:text-slate-700",
-                      )}
-                    />
-                  </div>
-                  <span
-                    className={cn(
-                      "flex-1 text-sm font-semibold transition-colors duration-300",
-                      isParentActive ? "text-slate-900" : "text-slate-700 group-hover:text-slate-900",
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-slate-400 transition-transform duration-300" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-slate-400 transition-transform duration-300" />
-                  )}
-                </Button>
+                <Icon
+                className={cn(
+                "h-4 w-4 transition-colors duration-300",
+                isParentActive ? "text-white" : "text-slate-600 group-hover:text-slate-700",
+                )}
+                />
+                </div>
+                <span
+                className={cn(
+                "flex-1 text-sm font-semibold transition-colors duration-300",
+                isParentActive ? "text-slate-900" : "text-slate-700 group-hover:text-slate-900",
+                )}
+                >
+                {item.label}
+                </span>
+                {isExpanded ? (
+                <ChevronDown className="h-4 w-4 text-slate-400 transition-transform duration-300" />
+                ) : (
+                <ChevronRight className="h-4 w-4 text-slate-400 transition-transform duration-300" />
+                )}
+              </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="space-y-1 mt-2 ml-4">
-                {item.items.map((subItem) => {
-                  const SubIcon = subItem.icon
-                  return (
-                    <Button
-                      key={subItem.id}
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start text-left pl-8 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 hover:bg-white/60 hover:shadow-sm",
-                        activeSection === subItem.id &&
-                          "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-l-3 border-blue-500 shadow-sm",
-                      )}
-                      onClick={() => onSectionChange(subItem.id)}
-                    >
-                      <SubIcon
-                        className={cn(
-                          "w-4 h-4 mr-3 transition-all duration-300",
-                          activeSection === subItem.id ? "text-blue-500" : "text-slate-400",
-                        )}
-                      />
-                      {subItem.label}
-                    </Button>
-                  )
-                })}
+              {item.items.map((subItem) => {
+                const SubIcon = subItem.icon
+                return (
+                <Button
+                key={subItem.id}
+                variant="ghost"
+                className={cn(
+                "w-full justify-start text-left pl-8 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 hover:bg-white/60 hover:shadow-sm",
+                activeSection === subItem.id &&
+                  "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-l-3 border-blue-500 shadow-sm",
+                )}
+                onClick={() => onSectionChange(subItem.id)}
+                >
+                <SubIcon
+                className={cn(
+                  "w-4 h-4 mr-3 transition-all duration-300",
+                  activeSection === subItem.id ? "text-blue-500" : "text-slate-400",
+                )}
+                />
+                {subItem.label}
+                </Button>
+                )
+              })}
               </CollapsibleContent>
             </Collapsible>
-          )
+            )
         })}
       </nav>
 

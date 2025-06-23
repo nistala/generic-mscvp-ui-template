@@ -72,7 +72,7 @@
 
 /* Content area background */
 .content-area {
-  background-color: #b7b2b3;
+  background-color: #e9ecef;
   min-height: 100vh;
 }
 
@@ -99,11 +99,9 @@
   @apply backdrop-blur-xl bg-white/90 border border-white/30 shadow-lg shadow-black/5;
   padding: 1rem;
 }
-
 .compact-card-header {
   padding-bottom: 0.75rem;
 }
-
 .compact-card-content {
   padding-top: 0.5rem;
 }
