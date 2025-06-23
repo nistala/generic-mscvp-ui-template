@@ -1,0 +1,31 @@
+name: Deploy generic mscvp ui template
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      PROJECT_ID: ${{ secrets.GCLOUD_PROJECT }}
+
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: 🔐 Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCLOUD_SERVICE_KEY }}
+
+    - name: 🛠️ Setup gcloud CLI
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCLOUD_PROJECT }}
+
+
+    - name: Deploy to Cloud Run via Buildpacks
+      run: |
+        gcloud run deploy generic-mscvp-ui-template --source . --region us-central1 --platform managed --allow-unauthenticated
