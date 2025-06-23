@@ -106,40 +106,46 @@ export function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
         return (
         <Collapsible key={item.id} open={isExpanded} onOpenChange={() => toggleExpanded(item.id)}>
           <CollapsibleTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn(
-            "w-full justify-start text-left px-3 py-2 h-auto hover:bg-white/60 hover:shadow-md rounded-xl transition-all duration-300 group",
-            isParentActive && "bg-white/80 shadow-lg backdrop-blur-sm",
-            )}
-          >
-            <div
-            className={cn(
-              "w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-300",
-              isParentActive ? "premium-gradient-blue shadow-lg" : "bg-slate-100 group-hover:bg-white",
-            )}
-            >
-            <Icon
+            <Button
+              variant="ghost"
               className={cn(
-              "h-4 w-4 transition-colors duration-300",
-              isParentActive ? "text-white" : "text-slate-600 group-hover:text-slate-700",
+              "w-full justify-start text-left px-3 py-2 h-auto hover:bg-white/60 hover:shadow-md rounded-xl transition-all duration-300 group",
+              isParentActive && "bg-white/80 shadow-lg backdrop-blur-sm"
               )}
-            />
-            </div>
-            <span
-            className={cn(
-              "flex-1 text-sm font-semibold transition-colors duration-300",
-              isParentActive ? "text-slate-900" : "text-slate-700 group-hover:text-slate-900",
-            )}
             >
-            {item.label}
-            </span>
-            {isExpanded ? (
-            <ChevronDown className="h-4 w-4 text-slate-400 transition-transform duration-300" />
-            ) : (
-            <ChevronRight className="h-4 w-4 text-slate-400 transition-transform duration-300" />
-            )}
-          </Button>
+              <div
+              className={cn(
+                "w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-300",
+                isParentActive
+                ? "bg-[#2368a0] shadow-lg"
+                : "bg-slate-100 group-hover:bg-white"
+              )}
+              >
+              <Icon
+                className={cn(
+                "h-4 w-4 transition-colors duration-300",
+                isParentActive
+                  ? "text-white"
+                  : "text-slate-600 group-hover:text-slate-700"
+                )}
+              />
+              </div>
+              <span
+              className={cn(
+                "flex-1 text-sm font-semibold transition-colors duration-300",
+                isParentActive
+                ? "text-[#2368a0]"
+                : "text-slate-700 group-hover:text-slate-900"
+              )}
+              >
+              {item.label}
+              </span>
+              {isExpanded ? (
+              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", isParentActive ? "text-[#2368a0]" : "text-slate-400")} />
+              ) : (
+              <ChevronRight className={cn("h-4 w-4 transition-transform duration-300", isParentActive ? "text-[#2368a0]" : "text-slate-400")} />
+              )}
+            </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-1 mt-1 ml-4">
           {item.items.map((subItem) => {
