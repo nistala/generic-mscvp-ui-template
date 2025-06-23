@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { FileText, Download, Eye, Search, Filter, RefreshCw } from "lucide-react"
+import { FileText, Download, Eye, Search, Filter, RefreshCw,Calendar,Sparkles } from "lucide-react"
 
 interface DocumentRepositoryScreenProps {
   searchQuery: string
@@ -90,6 +90,7 @@ export function DocumentRepositoryScreen({ searchQuery }: DocumentRepositoryScre
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
 
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false)
   const filteredDocuments = documents.filter((doc) => {
     const matchesSearch =
       doc.name.toLowerCase().includes((searchQuery || localSearch).toLowerCase()) ||
@@ -129,62 +130,157 @@ export function DocumentRepositoryScreen({ searchQuery }: DocumentRepositoryScre
   }
 
   return (
-    <div className="space-y-6">
-      {/* Search and Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-[#0d416b] flex items-center">
-            <FileText className="h-5 w-5 mr-2" />
-            Document Repository
-          </CardTitle>
-          <CardDescription>Searchable archive of EDI documents with download and preview options</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search documents..."
-                value={localSearch}
-                onChange={(e) => setLocalSearch(e.target.value)}
-                className="pl-10 border-[#b7b2b3]/30 focus:border-[#00aae7]"
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="acknowledged">Acknowledged</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="850">850 - Purchase Order</SelectItem>
-                <SelectItem value="810">810 - Invoice</SelectItem>
-                <SelectItem value="856">856 - ASN</SelectItem>
-                <SelectItem value="855">855 - PO Acknowledgment</SelectItem>
-                <SelectItem value="997">997 - Functional Ack</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button className="bg-[#00aae7] hover:bg-[#0d416b]">
-              <Filter className="h-4 w-4 mr-2" />
-              Apply Filters
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Documents Table */}
-      <Card>
-        <CardHeader>
+       <div className="min-h-screen bg-gradient-to-br from-slate-150 via-blue-150 to-indigo-200 p-3">
+      <div className="space-y-3 ">
+           <div className="flex items-center justify-between">
+                  <div>
+                    <h1 className="text-xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
+                       EDI Document Repository
+                    </h1>
+                    <p className="text-[#b7b2b3] mt-2 flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                       Searchable archive of EDI documents with download and preview
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Select defaultValue="today">
+                      <SelectTrigger className="w-40 bg-white/70 backdrop-blur-sm border-white/20 hover:bg-white/80">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="today">Today</SelectItem>
+                        <SelectItem value="yesterday">Yesterday</SelectItem>
+                        <SelectItem value="last7days">Last 7 Days</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="outline"
+                      className="border-[#b7b2b3] text-[#0d416b] hover:bg-white/80 backdrop-blur-sm"
+                      onClick={() => setIsAccordionOpen(true)}
+                    >
+                      <Filter className="h-4 w-4 mr-2" />
+                      Advanced Filters
+                    </Button>
+                    <Dialog open={isAccordionOpen} onOpenChange={setIsAccordionOpen}>
+                      <DialogContent className="max-w-xl bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-[#0d416b] to-[#00aae7] bg-clip-text text-transparent flex items-center gap-3">
+                        Advanced Filters
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Partner</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="All Partners" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="all">All Partners</SelectItem>
+                          <SelectItem value="walmart">Walmart Inc.</SelectItem>
+                          <SelectItem value="target">Target Corp.</SelectItem>
+                          <SelectItem value="amazon">Amazon LLC</SelectItem>
+                          <SelectItem value="homedepot">Home Depot</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Date Range</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="Last 7 days" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="today">Today</SelectItem>
+                          <SelectItem value="week">Last 7 days</SelectItem>
+                          <SelectItem value="month">Last 30 days</SelectItem>
+                          <SelectItem value="quarter">Last 90 days</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Transaction Type</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="All Types" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="all">All Types</SelectItem>
+                          <SelectItem value="850">850 - Purchase Order</SelectItem>
+                          <SelectItem value="810">810 - Invoice</SelectItem>
+                          <SelectItem value="856">856 - ASN</SelectItem>
+                          <SelectItem value="855">855 - PO Acknowledgment</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Status</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="All Status" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="all">All Status</SelectItem>
+                          <SelectItem value="success">Success</SelectItem>
+                          <SelectItem value="failure">Failure</SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Amount Range</label>
+                        <div className="flex gap-2">
+                          <input
+                          type="number"
+                          placeholder="Min"
+                          className="w-1/2 px-2 py-1 border rounded bg-white/80"
+                          />
+                          <input
+                          type="number"
+                          placeholder="Max"
+                          className="w-1/2 px-2 py-1 border rounded bg-white/80"
+                          />
+                        </div>
+                        </div>
+                        <div className="space-y-2">
+                        <label className="text-md font-bold text-[#232527]">Sort By</label>
+                        <Select>
+                          <SelectTrigger className="bg-white/80 backdrop-blur-sm border-white/30 hover:bg-white/90 transition-all duration-300">
+                          <SelectValue placeholder="Newest First" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/95 backdrop-blur-sm border-0 shadow-xl">
+                          <SelectItem value="newest">Newest First</SelectItem>
+                          <SelectItem value="oldest">Oldest First</SelectItem>
+                          <SelectItem value="amountHigh">Amount: High to Low</SelectItem>
+                          <SelectItem value="amountLow">Amount: Low to High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                        <Button
+                        variant="outline"
+                        className="border-[#b7b2b3] text-[#0d416b]"
+                        onClick={() => setIsAccordionOpen(false)}
+                        >
+                        Cancel
+                        </Button>
+                        <Button className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white">
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Apply
+                        </Button>
+                      </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Button className="bg-gradient-to-r from-[#00aae7] to-[#0d416b] hover:from-[#0d416b] hover:to-[#00aae7] text-white shadow-lg">
+                      <Download className="h-4 w-4 mr-2" />
+                      Export Data
+                    </Button>
+                  </div>
+                </div>
+        <Card>
+        {/* <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-[#0d416b]">EDI Documents</CardTitle>
@@ -197,7 +293,7 @@ export function DocumentRepositoryScreen({ searchQuery }: DocumentRepositoryScre
               Export All
             </Button>
           </div>
-        </CardHeader>
+        </CardHeader> */}
         <CardContent>
           <Table>
             <TableHeader>
@@ -309,6 +405,8 @@ export function DocumentRepositoryScreen({ searchQuery }: DocumentRepositoryScre
           </Table>
         </CardContent>
       </Card>
+       
+  </div>
     </div>
   )
 }

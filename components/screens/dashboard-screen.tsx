@@ -117,10 +117,10 @@ export function DashboardScreen({ searchQuery }: DashboardScreenProps) {
                     <h1 className="text-xl font-bold bg-gradient-to-r from-[#0d416b] via-[#00aae7] to-[#0d416b] bg-clip-text text-transparent">
                       Transaction Dashboard
                     </h1>
-                    <p className="text-[#b7b2b3] mt-2 flex items-center gap-2">
+                    <div className="text-[#b7b2b3] mt-2 flex items-center gap-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                       Real-time EDI transaction monitoring and analytics
-                    </p>
+                      Real-time EDI transaction monitoring and analytics
+                    </div>
                   </div>
                   <div className="flex gap-3">
                     <Select defaultValue="today">
